@@ -40,8 +40,8 @@ export default function HomePage() {
             </Reveal>
 
             <Reveal variant="fade-up" delay={0.2}>
-              <h1 className="text-balance text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl lg:text-[3.25rem] lg:leading-[1.1]">
-                Industrial auxiliary systems engineered for{" "}
+              <h1 className="text-balance text-3xl font-extrabold tracking-tight text-white sm:text-4xl md:text-5xl lg:text-[3.25rem] lg:leading-[1.1]">
+                <span className="text-white">Industrial auxiliary systems engineered for</span>{" "}
                 <span className="bg-gradient-to-r from-white via-slate-100 to-accent-400 bg-clip-text text-transparent">
                   zero downtime.
                 </span>
