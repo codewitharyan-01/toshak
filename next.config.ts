@@ -2,9 +2,8 @@ import path from "node:path";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Keep file tracing pinned to this project (stray lockfiles in parent
-  // directories can otherwise make Next infer the wrong workspace root).
-  outputFileTracingRoot: path.resolve(),
+  // Keep file tracing pinned to this project locally, allow Vercel to manage root automatically
+  outputFileTracingRoot: process.env.VERCEL ? undefined : path.resolve(),
 
   images: {
     unoptimized: true,
