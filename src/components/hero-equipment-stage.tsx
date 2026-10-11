@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -56,12 +56,32 @@ const showcaseSlugs = [
 
 export function HeroEquipmentStage() {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  // Automatically cycle through all 4 machines every 4 seconds
+  useEffect(() => {
+    if (isPaused) return;
+
+    const interval = setInterval(() => {
+      setSelectedIndex((prev) => (prev + 1) % showcaseSlugs.length);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [isPaused, selectedIndex]);
+
+  const handleSelect = (idx: number) => {
+    setSelectedIndex(idx);
+  };
 
   const currentItem = showcaseSlugs[selectedIndex];
   const currentProduct = products.find((p) => p.slug === currentItem.slug) || products[0];
 
   return (
-    <div className="relative flex flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-navy-900/90 p-4 shadow-2xl backdrop-blur-md sm:p-7">
+    <div
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      className="relative flex flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-navy-900/90 p-4 shadow-2xl backdrop-blur-md sm:p-7"
+    >
       {/* Dynamic ambient background glow */}
       <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-accent-500/10 blur-3xl pointer-events-none" />
 
@@ -77,7 +97,7 @@ export function HeroEquipmentStage() {
         </div>
         <div className="flex items-center gap-1.5 rounded-full border border-tech-green/30 bg-tech-green/10 px-2 py-0.5 font-mono text-[10px] text-tech-green">
           <span className="h-1.5 w-1.5 rounded-full bg-tech-green animate-pulse" />
-          FACTORY TESTED
+          AUTO ROTATING (4s)
         </div>
       </div>
 
@@ -122,7 +142,7 @@ export function HeroEquipmentStage() {
         ))}
       </div>
 
-      {/* Equipment Selector Strip */}
+      {/* Equipment Selector Strip with Live 4-second Progress Indicator */}
       <div className="mt-4 flex flex-wrap gap-1.5 border-t border-white/10 pt-3">
         {showcaseSlugs.map((item, idx) => {
           const isSelected = idx === selectedIndex;
@@ -130,8 +150,8 @@ export function HeroEquipmentStage() {
             <button
               key={item.slug}
               type="button"
-              onClick={() => setSelectedIndex(idx)}
-              className={`flex-1 min-w-[100px] sm:min-w-[120px] rounded-lg px-2 py-1.5 text-left text-xs transition-all ${
+              onClick={() => handleSelect(idx)}
+              className={`relative overflow-hidden flex-1 min-w-[100px] sm:min-w-[120px] rounded-lg px-2 py-1.5 text-left text-xs transition-all ${
                 isSelected
                   ? "border border-accent-500/60 bg-accent-500/20 text-white shadow-xs"
                   : "border border-white/5 bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white"
@@ -143,6 +163,17 @@ export function HeroEquipmentStage() {
               <span className="block truncate text-[11px] font-medium">
                 {item.title}
               </span>
+
+              {/* 4-second animated duration bar */}
+              {isSelected && !isPaused && (
+                <motion.div
+                  key={`progress-${selectedIndex}`}
+                  initial={{ width: "0%" }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: 4, ease: "linear" }}
+                  className="absolute bottom-0 left-0 h-0.5 bg-accent-400"
+                />
+              )}
             </button>
           );
         })}
